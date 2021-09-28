@@ -33,28 +33,28 @@ def createWordDoc(DocJSON):
     section = document.sections[0]
     section.page_height = Mm(297)
     section.page_width = Mm(210)
-    section.left_margin = Mm(25.4)
-    section.right_margin = Mm(25.4)
-    section.top_margin = Mm(25.4)
-    section.bottom_margin = Mm(25.4)
-    section.header_distance = Mm(12.7)
-    section.footer_distance = Mm(12.7)
+    section.left_margin = Mm(5)
+    section.right_margin = Mm(5)
+    section.top_margin = Mm(5)
+    section.bottom_margin = Mm(5)
+    section.header_distance = Mm(1)
+    section.footer_distance = Mm(1)
     style = document.styles['Normal']
     font = style.font
     font.name = 'Arial'
-    font.size = Pt(8)  #100 characters per line
+    font.size = Pt(11)  #100 characters per line
     lineChinese=""
     lineTraduction=""
     isLastLine=False
     DocJSONLen=len(DocJSON)
-    for idx in range(0,DocJSONLen):
+    for idx in range(218,DocJSONLen):
         pinyinLen=len(numbered_to_accented(DocJSON[idx]["Pinyin"]))
         traductionLen=len(DocJSON[idx]["Traduction"])
 
         if(idx==(DocJSONLen-1)):
             isLastLine=True
 
-        if ((len(lineChinese)+pinyinLen > 47) or (len(lineTraduction)+traductionLen > 47)):
+        if ((len(lineChinese)+pinyinLen > 40) or (len(lineTraduction)+traductionLen > 40)):
             padding=" "*(90-len(lineTraduction))
             document.add_paragraph(lineTraduction+padding+lineChinese)
             lineChinese=numbered_to_accented(DocJSON[idx]["Pinyin"])
