@@ -8,13 +8,16 @@ from docx import Document
 from docx.shared import Pt
 from docx.shared import Mm
 
+#which sheet and from which line should we start exporting
+ExportSheetNb=1
+ExportFromLine=0
 
 def retrieveDocJSON():
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('C:\\Users\\ascemama\\Documents\chinese-vocabulary-storage-d11d329ddf29.json', scope)
     client = gspread.authorize(creds)
     sheet = client.open('ChineseVocab')
-    sheet_instance = sheet.get_worksheet(0)
+    sheet_instance = sheet.get_worksheet(ExportSheetNb)
     records_data = sheet_instance.get_all_records()
     # test update data
     #print(sheet_instance.cell(col=3,row=2))
@@ -47,7 +50,7 @@ def createWordDoc(DocJSON):
     lineTraduction=""
     isLastLine=False
     DocJSONLen=len(DocJSON)
-    for idx in range(218,DocJSONLen):
+    for idx in range(ExportFromLine,DocJSONLen):
         pinyinLen=len(numbered_to_accented(DocJSON[idx]["Pinyin"]))
         traductionLen=len(DocJSON[idx]["Traduction"])
 
