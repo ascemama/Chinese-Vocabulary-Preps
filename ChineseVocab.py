@@ -9,7 +9,8 @@ from docx.shared import Pt
 from docx.shared import Mm
 
 #which sheet and from which line should we start exporting
-ExportSheetNb=1
+#ExportSheetNb=9
+ExportSheetName="Sheet12"
 ExportFromLine=0
 
 def retrieveDocJSON():
@@ -17,7 +18,8 @@ def retrieveDocJSON():
     creds = ServiceAccountCredentials.from_json_keyfile_name('C:\\Users\\ascemama\\Documents\chinese-vocabulary-storage-d11d329ddf29.json', scope)
     client = gspread.authorize(creds)
     sheet = client.open('ChineseVocab')
-    sheet_instance = sheet.get_worksheet(ExportSheetNb)
+    #sheet_instance = sheet.get_worksheet(ExportSheetNb)
+    sheet_instance=sheet.worksheet(ExportSheetName)
     records_data = sheet_instance.get_all_records()
     # test update data
     #print(sheet_instance.cell(col=3,row=2))
