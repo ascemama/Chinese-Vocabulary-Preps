@@ -9,8 +9,8 @@ from docx.shared import Pt
 from docx.shared import Mm
 
 #which sheet and from which line should we start exporting
-ExportSheetNameList=["Sheet8","Sheet9","Sheet10","Sheet12"]
-ExportFromLine=105
+ExportSheetNameList=["Sheet8","Sheet9","Sheet10","Sheet12","Sheet14","Sheet15","Sheet16","Sheet17", "Sheet18", "Sheet19","Sheet20", "Sheet21"]
+ExportFromLine=1
 
  
 def retrieveDoc():
