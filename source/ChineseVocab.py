@@ -15,7 +15,7 @@ ExportFromLine=1
  
 def retrieveDoc():
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('C:\\Users\\ascemama\\Documents\chinese-vocabulary-storage-d11d329ddf29.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('C:\\Users\\ascemama\\Documents\\Private\\Chinese\\chinese-vocabulary-storage-d11d329ddf29.json', scope)
     client = gspread.authorize(creds)
     chineseVocabDoc = client.open('ChineseVocab')
     return chineseVocabDoc
