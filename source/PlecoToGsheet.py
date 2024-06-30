@@ -1,6 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+import time
 
 CurrentWorkSheet="Sheet25"
 
@@ -35,6 +36,8 @@ def upload_to_google_sheet(data, sheet_name):
 
     for row in data:
         sheet.append_row([current_date, row[1], row[0]])
+        #Google sheet rate limit 60 write / minute
+        time.sleep(1)
 
 # Example usage:
 file_path = 'source/pleco.txt'  # Replace with the path to your file
