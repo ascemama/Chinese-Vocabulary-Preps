@@ -9,8 +9,8 @@ from docx.shared import Pt
 from docx.shared import Mm
 
 #which sheet and from which line should we start exporting
-ExportSheetNameList=["Sheet8","Sheet9","Sheet10","Sheet12","Sheet14","Sheet15","Sheet16","Sheet17", "Sheet18", "Sheet19","Sheet20", "Sheet21"]
-ExportFromLine=1
+ExportSheetNameList=["Sheet8","Sheet9","Sheet10","Sheet12","Sheet14","Sheet15","Sheet16","Sheet17", "Sheet18", "Sheet19","Sheet20", "Sheet21","Sheet22","Sheet23","Sheet24"]
+ExportFromLine=300
 
  
 def retrieveDoc():
@@ -49,7 +49,7 @@ def addWordsToBeReReviewed(ChineseVocabDoc, newDoc):
          
         records_length=len(records_data)
         for idx in range(0,records_length):
-            if(records_data[idx]["ToBeReviewed"]=="X"):
+            if(records_data[idx]["ToBeReviewed"]=="x"):
                 #print(records_data[idx]["Traduction"])
                 pinyinLen=len(numbered_to_accented(records_data[idx]["Pinyin"]))
                 traductionLen=len(records_data[idx]["Traduction"])
