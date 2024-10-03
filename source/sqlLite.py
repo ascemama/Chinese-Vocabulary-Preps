@@ -100,12 +100,14 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
         user_input = input("Type 1 to keep this traduction. type x to discard this word.\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
             addRowToDB(pinyin,traduction,cursor)
+            connection.commit()
+            return traduction
         if(user_input == "x"):
             return "x"
         else:
             addRowToDB(pinyin,user_input,cursor)
-        connection.commit()
-        return traduction
+            connection.commit()
+            return user_input
     #if in DB already with the same traduction
     else:
         return traduction
