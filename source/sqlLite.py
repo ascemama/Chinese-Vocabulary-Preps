@@ -85,12 +85,14 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
         print("1- "+row[0][3])
         print("2- "+traduction)
         while (True):
-            user_input = input("Enter 1 or 2, or a new traduction:\n")
+            user_input = input("Enter 1,2,x or a new traduction:\n")
             if user_input =="1":
                 return row[0][3]
             elif user_input == "2":
                 updateTraductionInDB(pinyin,traduction,cursor,connection)
                 return traduction
+            elif user_input == "x":
+                return "x"
             else:
                 updateTraductionInDB(pinyin,user_input,cursor,connection)
                 return user_input
