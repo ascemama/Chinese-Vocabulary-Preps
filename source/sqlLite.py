@@ -112,7 +112,12 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
             return user_input
     #if in DB already with the same traduction
     else:
-        return traduction
+        print("\nPinyin: "+pinyin+ "\nTraduction: "+traduction)
+        user_input = input("Type 1 to keep this traduction. type x to discard this word.\nOtherwise, what should be the traduction:\n")
+        if(user_input == "1"):
+            return traduction
+        else:
+            return "x"
 
 def addExcelSheetToDB(sheet,cursor,connection):
     records_data = sheet.get_all_records()
