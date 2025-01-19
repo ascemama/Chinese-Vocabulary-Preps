@@ -19,7 +19,6 @@ def process_chinese_pleco_file(file_path,cursor, connection):
                 parts = line.split()
                 pinyin = parts[1].strip().replace("\n","")
                 traduction = " ".join(parts[3:]).strip().replace("\n","")
-                print("bbbb")
                 print("\n ----- "+str(idx)+"/"+str(nbVoc)+" ----- \n"+pinyin+" -- "+traduction)
                 traduction=updateDBWithNewWordFromPleco(pinyin,traduction,cursor,connection)
                 # x means we discard this word
@@ -35,6 +34,6 @@ print(connection)
 result = process_chinese_pleco_file(file_path,cursor,connection)
 closeDB(cursor,connection)
 print("Upload to google sheet")
-#upload_to_google_sheet(result,CurrentWorkSheet)
+upload_to_google_sheet(result,CurrentWorkSheet)
 print("Done !") 
  
