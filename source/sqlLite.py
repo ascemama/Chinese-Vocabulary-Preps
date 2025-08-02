@@ -21,6 +21,7 @@ def openDB():
     return cursor, connection
 
 def closeDB(cursor,connection):
+    connection.commit()
     cursor.close()
     connection.close()
 
@@ -33,6 +34,7 @@ def addRowToDB(pinyin, traduction,cursor):
         print(f'Error: {e}, Pinyin {pinyin}, translation {traduction}')
 
 def updateTraductionInDB(pinyin,traduction, cursor, connection):
+    
     try:
         cursor.execute("UPDATE vocabulary SET translation = ? WHERE pinyin = ?",(traduction,pinyin))
         connection.commit()
@@ -85,7 +87,7 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
         print("1- "+row[0][3])
         print("2- "+traduction)
         while (True):
-            user_input = input("Enter 1,2,x or a new traduction:\n")
+            user_input = input("Enter 1,2,x,y, or a new traduction:\n")
             if user_input =="1":
                 return row[0][3]
             elif user_input == "2":
@@ -93,19 +95,23 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
                 return traduction
             elif user_input == "x":
                 return "x"
+            elif user_input == "y":
+                return "y"
             else:
                 updateTraductionInDB(pinyin,user_input,cursor,connection)
                 return user_input
     #if not in DB yet, need to reformulate the traduction from pleco
     if not bool(row):
         print("\nPinyin: "+pinyin+ "\nTraduction: "+traduction)
-        user_input = input("Type 1 to keep this traduction. type x to discard this word.\nOtherwise, what should be the traduction:\n")
+        user_input = input("Type 1 to keep this traduction. type x to discard this word, y for finishing and updating DB\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
             addRowToDB(pinyin,traduction,cursor)
             connection.commit()
             return traduction
         if(user_input == "x"):
             return "x"
+        elif user_input == "y":
+                return "y"
         else:
             addRowToDB(pinyin,user_input,cursor)
             connection.commit()
@@ -116,8 +122,13 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
         user_input = input("Type 1 to keep this traduction. type x to discard this word.\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
             return traduction
+        elif user_input == "y":
+                return "y"
+        elif user_input == "x":
+                return "x"
         else:
-            return "x"
+            updateTraductionInDB(pinyin,user_input,cursor,connection)
+            return user_input
 
 def addExcelSheetToDB(sheet,cursor,connection):
     records_data = sheet.get_all_records()
