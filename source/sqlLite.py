@@ -87,7 +87,7 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
         print("1- "+row[0][3])
         print("2- "+traduction)
         while (True):
-            user_input = input("Enter 1,2,x,y, or a new traduction:\n")
+            user_input = input("Enter 1,2,x to discard this word,y for finishing and updating DB, z for finishing updating DB and Gsheet, or a new traduction:\n")
             if user_input =="1":
                 return row[0][3]
             elif user_input == "2":
@@ -97,13 +97,15 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
                 return "x"
             elif user_input == "y":
                 return "y"
+            elif user_input == "z":
+                return "z"
             else:
                 updateTraductionInDB(pinyin,user_input,cursor,connection)
                 return user_input
     #if not in DB yet, need to reformulate the traduction from pleco
     if not bool(row):
         print("\nPinyin: "+pinyin+ "\nTraduction: "+traduction)
-        user_input = input("Type 1 to keep this traduction. type x to discard this word, y for finishing and updating DB\nOtherwise, what should be the traduction:\n")
+        user_input = input("Type 1 to keep this traduction. type x to discard this word, y for finishing and updating DB,z for finishing updating DB and Gsheet\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
             addRowToDB(pinyin,traduction,cursor)
             connection.commit()
@@ -112,6 +114,8 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
             return "x"
         elif user_input == "y":
                 return "y"
+        elif user_input == "z":
+                return "z"
         else:
             addRowToDB(pinyin,user_input,cursor)
             connection.commit()
@@ -119,11 +123,13 @@ def updateDBWithNewWordFromPleco(pinyin,traduction, cursor,connection):
     #if in DB already with the same traduction
     else:
         print("\nPinyin: "+pinyin+ "\nTraduction: "+traduction)
-        user_input = input("Type 1 to keep this traduction. type x to discard this word.\nOtherwise, what should be the traduction:\n")
+        user_input = input("Type 1 to keep this traduction. type x to discard this word,y for finishing and updating DB,z for finishing updating DB and Gsheet\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
             return traduction
         elif user_input == "y":
                 return "y"
+        elif user_input == "z":
+                return "z"
         elif user_input == "x":
                 return "x"
         else:

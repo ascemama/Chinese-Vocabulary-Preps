@@ -22,8 +22,12 @@ def process_chinese_pleco_file(file_path,cursor, connection):
                 print("\n ----- "+str(idx)+"/"+str(nbVoc)+" ----- \n"+pinyin+" -- "+traduction)
                 traduction=updateDBWithNewWordFromPleco(pinyin,traduction,cursor,connection)
                 # x means we discard this word
-                if(traduction != "x"):
+                if(traduction == "y"):
+                    return None
+                if(traduction != "x" and traduction != "z"):
                     result_array.append([pinyin, traduction])
+                if(traduction == "z"):
+                    break
 
     return result_array
 
@@ -33,7 +37,8 @@ cursor, connection=openDB()
 print(connection)
 result = process_chinese_pleco_file(file_path,cursor,connection)
 closeDB(cursor,connection)
-print("Upload to google sheet")
-upload_to_google_sheet(result,CurrentWorkSheet)
-print("Done !") 
+if result != None:
+    print("Upload to google sheet")
+    upload_to_google_sheet(result,CurrentWorkSheet)
+    print("Done !") 
  
