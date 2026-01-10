@@ -1,9 +1,8 @@
-from oauth2client.service_account import ServiceAccountCredentials
-from gSheet import upload_to_google_sheet,CurrentWorkSheet
+from gSheetHelper import upload_to_google_sheet, CurrentChineseWorksheet
 from sqlLite import openDB,closeDB,updateDBWithNewWordFromPleco
 
 
-def process_chinese_pleco_file(file_path,cursor, connection):
+def process_chinese_pleco_file(file_path,cursor, connection,tableName):
     # Initialize an empty list to hold the 2D array
     result_array = []
 
@@ -20,7 +19,7 @@ def process_chinese_pleco_file(file_path,cursor, connection):
                 pinyin = parts[1].strip().replace("\n","")
                 traduction = " ".join(parts[3:]).strip().replace("\n","")
                 print("\n ----- "+str(idx)+"/"+str(nbVoc)+" ----- \n"+pinyin+" -- "+traduction)
-                traduction=updateDBWithNewWordFromPleco(pinyin,traduction,cursor,connection)
+                traduction=updateDBWithNewWordFromPleco(pinyin,traduction,cursor,connection,tableName)
                 # x means we discard this word
                 if(traduction == "y"):
                     return None
@@ -35,10 +34,10 @@ def process_chinese_pleco_file(file_path,cursor, connection):
 file_path = 'source/pleco.txt'  # Replace with the path to your file
 cursor, connection=openDB()
 print(connection)
-result = process_chinese_pleco_file(file_path,cursor,connection)
+result = process_chinese_pleco_file(file_path,cursor,connection,"chinese")
 closeDB(cursor,connection)
 if result != None:
     print("Upload to google sheet")
-    upload_to_google_sheet(result,CurrentWorkSheet)
+    upload_to_google_sheet(result,"ChineseVocab", CurrentChineseWorksheet)
     print("Done !") 
  

@@ -1,18 +1,10 @@
-from datetime import date
-from source.gSheetHelper import retrieveDoc
-from config import CREDS_PATH
-from docHelper import createNewWordDoc, addNewWords
-#which sheet and from which line should we start exporting
-ExportSheetNameList=["Sheet8","Sheet9","Sheet10","Sheet12","Sheet14","Sheet15","Sheet16","Sheet17", "Sheet18", "Sheet19","Sheet20", "Sheet21","Sheet22","Sheet23","Sheet24","Sheet25", "Sheet26","Sheet27","Sheet28","Sheet29","Sheet30","Sheet31","Sheet32","Sheet33","Sheet34"]
-ExportFromLine=228
+from dragonmapper.transcriptions import numbered_to_accented
 
-""" def retrieveDoc():
-    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_PATH, scope)
-    client = gspread.authorize(creds)
-    chineseVocabDoc = client.open('ChineseVocab')
-    return chineseVocabDoc """
-""" 
+#pip3 install python-docx
+from docx import Document
+from docx.shared import Pt
+from docx.shared import Mm
+
 def createNewWordDoc():
     document = Document()
     #set A4
@@ -44,71 +36,64 @@ def addWordsToBeReReviewed(ChineseVocabDoc, newDoc):
         for idx in range(0,records_length):
             if(records_data[idx]["ToBeReviewed"]=="x"):
                 #print(records_data[idx]["Traduction"])
-                pinyinLen=len(numbered_to_accented(records_data[idx]["Pinyin"]))
+                SourceLen=len(numbered_to_accented(records_data[idx]["Source"]))
                 traductionLen=len(records_data[idx]["Traduction"])
 
                 if(idx==(records_length-1)):
                     isLastLine=True
 
-                if ((len(lineChinese)+pinyinLen > 40) or (len(lineTraduction)+traductionLen > 40)):
+                if ((len(lineChinese)+SourceLen > 40) or (len(lineTraduction)+traductionLen > 40)):
                     padding=" "*(90-len(lineTraduction))
                     newDoc.add_paragraph(lineTraduction+padding+lineChinese)
-                    lineChinese=numbered_to_accented(records_data[idx]["Pinyin"])
+                    lineChinese=numbered_to_accented(records_data[idx]["Source"])
                     lineTraduction=records_data[idx]["Traduction"]
                 else:
                     if idx==0:
-                        lineChinese=numbered_to_accented(records_data[idx]["Pinyin"])
+                        lineChinese=numbered_to_accented(records_data[idx]["Source"])
                         lineTraduction=records_data[idx]["Traduction"]
                     if (isLastLine):
-                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Pinyin"])
+                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
                         lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
                     else:
-                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Pinyin"])
+                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
                         lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
         
                 if(isLastLine):
                     padding=" "*(90-len(lineTraduction))
                     newDoc.add_paragraph(lineTraduction+padding+lineChinese)
 
-def addNewWords(ChineseVocabDoc, newDoc):
+def addNewWords(ChineseVocabDoc, newDoc,exportSheetNameList,exportFromLine):
     lineChinese=""
     lineTraduction=""
     isLastLine=False
-    sheet_instance=ChineseVocabDoc.worksheet(ExportSheetNameList[-1])
+    sheet_instance=ChineseVocabDoc.worksheet(exportSheetNameList[-1])
     #print(sheet_instance)
     records_data = sheet_instance.get_all_records()
     records_length=len(records_data)
-    for idx in range(ExportFromLine,records_length):
-        pinyinLen=len(numbered_to_accented(records_data[idx]["Pinyin"]))
+    for idx in range(exportFromLine,records_length):
+        SourceLen=len(numbered_to_accented(records_data[idx]["Source"]))
         traductionLen=len(records_data[idx]["Traduction"])
         #print("add new words "+records_data[idx]["Traduction"])
         if(idx==(records_length-1)):
             isLastLine=True
 
-        if ((len(lineChinese)+pinyinLen > 40) or (len(lineTraduction)+traductionLen > 40)):
+        if ((len(lineChinese)+SourceLen > 40) or (len(lineTraduction)+traductionLen > 40)):
             padding=" "*(90-len(lineTraduction))
             newDoc.add_paragraph(lineTraduction+padding+lineChinese)
-            lineChinese=numbered_to_accented(records_data[idx]["Pinyin"])
+            lineChinese=numbered_to_accented(records_data[idx]["Source"])
             lineTraduction=records_data[idx]["Traduction"]
         else:
             if idx==0:
-                lineChinese=numbered_to_accented(records_data[idx]["Pinyin"])
+                lineChinese=numbered_to_accented(records_data[idx]["Source"])
                 lineTraduction=records_data[idx]["Traduction"]
             if (isLastLine):
-                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Pinyin"])
+                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
                 lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
             else:
-                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Pinyin"])
+                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
                 lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
         
         if(isLastLine):
             padding=" "*(90-len(lineTraduction))
             newDoc.add_paragraph(lineTraduction+padding+lineChinese)
-  """
-### Main
-
-chineseVocabDoc=retrieveDoc("ChineseVocab")
-newDoc=createNewWordDoc()
-#addWordsToBeReReviewed(chineseVocabDoc,newDoc)
-addNewWords(chineseVocabDoc,newDoc,ExportSheetNameList,ExportFromLine)
-newDoc.save('./vocab_chinese_'+str(date.today())+'.docx')
+ 

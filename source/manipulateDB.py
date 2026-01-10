@@ -8,15 +8,32 @@ cursor = connection.cursor()
 
 # Create a table named 'vocabulary' with columns for date, pinyin, and translation
 # The pinyin column has a UNIQUE constraint
-cursor.execute('''
+""" cursor.execute('''
 CREATE TABLE IF NOT EXISTS vocabulary (
     id INTEGER PRIMARY KEY,
     date DATE,
     pinyin TEXT UNIQUE,
     translation TEXT
 )
+''') """
+""""
+cursor.execute('''
+ALTER TABLE vocabulary RENAME TO chinese;
 ''')
+"""
+cursor.execute('''
+    ALTER TABLE chinese
+    RENAME COLUMN pinyin TO source;
+    ''') 
 
+""" cursor.execute('''
+CREATE TABLE IF NOT EXISTS arabic (
+    id INTEGER PRIMARY KEY,
+    date DATE,
+    source TEXT UNIQUE,
+    translation TEXT
+)
+''') """
 # Commit the changes to the database
 connection.commit()
 

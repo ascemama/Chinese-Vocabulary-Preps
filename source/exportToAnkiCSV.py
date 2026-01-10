@@ -1,16 +1,11 @@
 import argparse
 import csv
 from pathlib import Path
-
-import gspread
+from gSheetHelper import open_spreadsheet
 from oauth2client.service_account import ServiceAccountCredentials
 
-
-CREDS_PATH = (
-    "C:\\Users\\ascemama\\Documents\\Private\\Chinese\\"
-    "chinese-vocabulary-storage-d11d329ddf29.json"
-)
-
+from config import CREDS_PATH
+""" 
 
 def open_spreadsheet(spreadsheet_name):
     scope = [
@@ -19,7 +14,7 @@ def open_spreadsheet(spreadsheet_name):
     ]
     creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_PATH, scope)
     client = gspread.authorize(creds)
-    return client.open(spreadsheet_name)
+    return client.open(spreadsheet_name) """
 
 
 def export_rows_to_csv(spreadsheet_name, sheet_name, first_line, last_line, output_path):
@@ -34,16 +29,16 @@ def export_rows_to_csv(spreadsheet_name, sheet_name, first_line, last_line, outp
     rows = worksheet.get(cell_range)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", newline="", encoding="utf-8") as csv_file:
+    with output_path.open("w", newline="", encoding="utf-8-sig") as csv_file:
         writer = csv.writer(csv_file)
         for row in rows:
             if len(row) >= 2:
-                pinyin = row[0].replace(",", ".")
+                source = row[0].replace(",", ".")
                 translation = row[1].replace(",", ".")
-                writer.writerow([pinyin, translation])
+                writer.writerow([source, translation])
             elif len(row) == 1:
-                pinyin = row[0].replace(",", ".")
-                writer.writerow([pinyin, ""])
+                source = row[0].replace(",", ".")
+                writer.writerow([source, ""])
             else:
                 writer.writerow(["", ""])
 
