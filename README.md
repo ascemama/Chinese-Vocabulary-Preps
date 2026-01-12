@@ -2,7 +2,7 @@
 Tool to enable weekly creation of artifacts to study Chinese vocabulary.
 
 ## Setup
-Vocabulary must be entered in a Google Sheet. [Datum, Traduction, PinYin]
+Vocabulary must be entered in a Google Sheet. [Datum, Traduction, Source]
 
 ## Scripts
 Download the Google Sheet content as JSON and print words in an A4 Word document which can be folded for easier study.
