@@ -1,4 +1,4 @@
-from source.gSheetHelper import upload_to_google_sheet, CurrentChineseWorksheet
+from gSheetHelper import upload_to_google_sheet, CurrentChineseWorksheet
 from sqlLite import openDB,closeDB,updateDBWithNewWordFromNotebook
  
 def process_chinese_notebook_file(file_path,cursor,connection):
@@ -13,7 +13,7 @@ def process_chinese_notebook_file(file_path,cursor,connection):
                 parts = line.split(":")
                 traduction = parts[0].strip().replace("\n","")
                 pinyin = parts[1].strip().replace("\n","")
-                traduction=updateDBWithNewWordFromNotebook(pinyin,traduction,cursor,connection)
+                traduction=updateDBWithNewWordFromNotebook(pinyin,traduction,cursor,connection,"chinese")
                 result_array.append([pinyin, traduction])
 
     return result_array

@@ -96,7 +96,7 @@ def updateDBWithNewWordFromNotebook(source,traduction, cursor,connection,tableNa
                 return user_input
     #if not in DB yet
     if not bool(row):
-        addRowToDB(source,traduction,cursor)
+        addRowToDB(source,traduction,cursor,tableName)
         connection.commit()
         return traduction
     #if in DB already with the same traduction
