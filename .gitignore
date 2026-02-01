@@ -2,3 +2,5 @@ myenv/
 *.txt
 __pycache__/
 vocab_*.docx
+*.cred
+

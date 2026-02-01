@@ -1,6 +1,14 @@
 import sqlite3
 import datetime
 import sys
+
+try:
+    from openai import get_traduction_from_openai, OpenAITranslationError
+except ImportError:  # Fallback if the helper is missing for any reason
+    get_traduction_from_openai = None
+
+    class OpenAITranslationError(Exception):
+        """Placeholder exception when OpenAI helper is not available."""
 #from datetime import date
 #from gSheet import retrieveDoc, ExportSheetNameList
 
@@ -164,22 +172,22 @@ def updateDBWithNewWord(source,traduction, cursor,connection,tableName):
             return user_input
 
 #check if traduction already exist in DB. Ask if the new traduction should be kept in DB instead
-def updateDBWithNewWordFromPleco(source,traduction, cursor,connection,tableName):
-    cursor.execute(f'SELECT * FROM {tableName} WHERE source = ? LIMIT 1;', (source,))
+def updateDBWithNewWordFromPleco(chinese_char,pinyin,pleco_traduction, cursor,connection,tableName):
+    cursor.execute(f'SELECT * FROM {tableName} WHERE source = ? LIMIT 1;', (pinyin,))
      
     row=cursor.fetchall()
     #if already exist and with a different traduction. Need to chose which trad to keep
-    if bool(row) and (traduction != row[0][3]):
-        print("\n"+format_rtl(source)+" already exist in DB. Choose which one to keep:")
+    if bool(row) and (pleco_traduction != row[0][3]):
+        print("\n"+format_rtl(pinyin)+" already exist in DB. Choose which one to keep:")
         print("1- "+format_rtl(row[0][3]))
-        print("2- "+format_rtl(traduction))
+        print("2- "+format_rtl(pleco_traduction))
         while (True):
             user_input = input("Enter 1,2,x to discard this word,y for finishing and updating DB, z for finishing updating DB and Gsheet, or a new traduction:\n")
             if user_input =="1":
                 return row[0][3]
             elif user_input == "2":
-                updateTraductionInDB(source,traduction,cursor,connection,tableName)
-                return traduction
+                updateTraductionInDB(pinyin,pleco_traduction,cursor,connection,tableName)
+                return pleco_traduction
             elif user_input == "x":
                 return "x"
             elif user_input == "y":
@@ -187,32 +195,57 @@ def updateDBWithNewWordFromPleco(source,traduction, cursor,connection,tableName)
             elif user_input == "z":
                 return "z"
             else:
-                updateTraductionInDB(source,user_input,cursor,connection,tableName)
+                updateTraductionInDB(pinyin,user_input,cursor,connection,tableName)
                 return user_input
     #if not in DB yet, need to reformulate the traduction from pleco
     if not bool(row):
-        print("\nsource: "+format_rtl(source)+ "\nTraduction: "+format_rtl(traduction))
-        user_input = input("Type 1 to keep this traduction. type x to discard this word, y for finishing and updating DB,z for finishing updating DB and Gsheet\nOtherwise, what should be the traduction:\n")
-        if(user_input == "1"):
-            addRowToDB(source,traduction,cursor,tableName)
-            connection.commit()
-            return traduction
-        if(user_input == "x"):
-            return "x"
-        elif user_input == "y":
+        print("\033[31m\npinyin: "+format_rtl(pinyin)+ "\npleco: "+format_rtl(pleco_traduction)+"\n\033[0m")
+        openai_traduction = None
+        if get_traduction_from_openai and chinese_char.strip():
+            try:
+                openai_traduction = get_traduction_from_openai(chinese_char)
+                print("\033[32mOpenAI traduction suggestion:\n"+openai_traduction+"\033[0m")
+            except OpenAITranslationError as err:
+                print(f"OpenAI traduction unavailable: {err}")
+        elif not get_traduction_from_openai:
+            print("OpenAI traduction helper is not configured. Skipping automatic suggestion.")
+
+        while True:
+            prompt_message = "Type 1 to keep this traduction."
+            if openai_traduction:
+                prompt_message = "Type 1 to keep the Pleco traduction."
+                prompt_message += " Type 2 to keep the OpenAI traduction."
+            prompt_message += " type x to discard this word, y for finishing and updating DB,z for finishing updating DB and Gsheet\nOtherwise, what should be the traduction:\n"
+
+            user_input = input(prompt_message)
+            if(user_input == "1"):
+                addRowToDB(pinyin,pleco_traduction,cursor,tableName)
+                connection.commit()
+                return pleco_traduction
+            if(user_input == "2"):
+                if openai_traduction:
+                    addRowToDB(pinyin,openai_traduction,cursor,tableName)
+                    connection.commit()
+                    return openai_traduction
+                else:
+                    print("OpenAI traduction is not available for this word. Please choose another option.")
+                    continue
+            if(user_input == "x"):
+                return "x"
+            elif user_input == "y":
                 return "y"
-        elif user_input == "z":
+            elif user_input == "z":
                 return "z"
-        else:
-            addRowToDB(source,user_input,cursor,tableName)
-            connection.commit()
-            return user_input
+            else:
+                addRowToDB(pinyin,user_input,cursor,tableName)
+                connection.commit()
+                return user_input
     #if in DB already with the same traduction
     else:
-        print("\nsource: "+format_rtl(source)+ "\nTraduction: "+format_rtl(traduction))
+        print("\npinyin: "+format_rtl(pinyin)+ "\nTraduction: "+format_rtl(pleco_traduction))
         user_input = input("Type 1 to keep this traduction. type x to discard this word,y for finishing and updating DB,z for finishing updating DB and Gsheet\nOtherwise, what should be the traduction:\n")
         if(user_input == "1"):
-            return traduction
+            return pleco_traduction
         elif user_input == "y":
                 return "y"
         elif user_input == "z":
@@ -220,7 +253,7 @@ def updateDBWithNewWordFromPleco(source,traduction, cursor,connection,tableName)
         elif user_input == "x":
                 return "x"
         else:
-            updateTraductionInDB(source,user_input,cursor,connection,tableName)
+            updateTraductionInDB(pinyin,user_input,cursor,connection,tableName)
             return user_input
 
 def addExcelSheetToDB(sheet,cursor,connection):

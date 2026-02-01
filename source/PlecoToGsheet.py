@@ -17,9 +17,10 @@ def process_chinese_pleco_file(file_path,cursor, connection,tableName):
             if(line.strip()):
                 parts = line.split()
                 pinyin = parts[1].strip().replace("\n","")
-                traduction = " ".join(parts[3:]).strip().replace("\n","")
-                print("\n ----- "+str(idx)+"/"+str(nbVoc)+" ----- \n"+pinyin+" -- "+traduction)
-                traduction=updateDBWithNewWordFromPleco(pinyin,traduction,cursor,connection,tableName)
+                chinese_char=parts[0].strip().replace("\n","")
+                pleco_traduction = " ".join(parts[3:]).strip().replace("\n","")
+                print("\n ----- "+str(idx)+"/"+str(nbVoc)+" ----- \n"+pinyin+" -- "+pleco_traduction)
+                traduction=updateDBWithNewWordFromPleco(chinese_char,pinyin,pleco_traduction,cursor,connection,tableName)
                 # x means we discard this word
                 if(traduction == "y"):
                     return None
