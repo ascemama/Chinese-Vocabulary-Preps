@@ -1,13 +1,62 @@
-# Chinese-Vocabulary-Preps
-Tool to enable weekly creation of artifacts to study Chinese vocabulary.
+﻿# Chinese-Vocabulary-Preps
+Tooling to prepare weekly Chinese/Arabic vocabulary study artifacts from Google Sheets and local notebook exports.
 
-## Setup
-Vocabulary must be entered in a Google Sheet. [Datum, Traduction, Source]
+## Prerequisites
+- Install `uv`: [https://docs.astral.sh/uv/getting-started/installation/](https://docs.astral.sh/uv/getting-started/installation/)
+- Ensure Google service account credentials path in `source/config.py` is valid on your machine.
 
-## Scripts
-Download the Google Sheet content as JSON and print words in an A4 Word document which can be folded for easier study.
+## Install dependencies with uv
+If your system Python was removed, install one managed by uv:
 
-Export a range from a worksheet to a CSV for Anki (columns B and C):
 ```powershell
-python source\exportToAnkiCSV.py ChineseVocab Sheet34 228 300 -o source\anki_export.csv
+uv python install 3.12
 ```
+
+From repo root, create/update the project environment and dependencies:
+
+```powershell
+uv sync
+```
+
+This creates/refreshes `.venv` and installs dependencies from `pyproject.toml`.
+
+## Run scripts with uv
+Run scripts through uv so they always use the project environment.
+
+Build weekly Chinese vocabulary `.docx`:
+```powershell
+uv run python source\ChineseVocab.py
+```
+
+Import Chinese notebook entries to DB and Google Sheet:
+```powershell
+uv run python source\notebookToGsheet.py
+```
+
+Import Pleco export to DB and Google Sheet (interactive):
+```powershell
+uv run python source\plecoToGsheet.py
+```
+
+Import Arabic notebook entries to DB and Google Sheet:
+```powershell
+uv run python source\arabicToGsheet.py
+```
+
+Export a worksheet range to Anki CSV (columns B and C):
+```powershell
+uv run python source\exportToAnkiCSV.py ChineseVocab Sheet34 228 300 -o source\anki_export.csv
+```
+
+One-off DB maintenance script:
+```powershell
+uv run python source\manipulateDB.py
+```
+
+## Optional: OpenAI translation helper
+`source/sqlLite.py` can call `source/openai.py` for translation suggestions.
+
+Set a credential file at `source/openAI.cred` (ignored by git), or define:
+- `OPENAI_CREDENTIAL_FILE`
+- `OPENAI_API_URL` (optional override)
+- `OPENAI_TRANSLATION_MODEL` (optional override)

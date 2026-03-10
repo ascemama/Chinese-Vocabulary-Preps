@@ -1,6 +1,8 @@
-myenv/
+﻿myenv/
+.venv/
 *.txt
 __pycache__/
 vocab_*.docx
 *.cred
+
 
