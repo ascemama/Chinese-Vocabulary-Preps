@@ -2,8 +2,51 @@ from dragonmapper.transcriptions import numbered_to_accented
 
 #pip3 install python-docx
 from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 from docx.shared import Pt
 from docx.shared import Mm
+
+def addWordField(paragraph, fieldName, placeholderText="1"):
+    run = paragraph.add_run()
+    fieldBegin = OxmlElement("w:fldChar")
+    fieldBegin.set(qn("w:fldCharType"), "begin")
+
+    fieldInstruction = OxmlElement("w:instrText")
+    fieldInstruction.set(qn("xml:space"), "preserve")
+    fieldInstruction.text = " " + fieldName + " "
+
+    fieldSeparate = OxmlElement("w:fldChar")
+    fieldSeparate.set(qn("w:fldCharType"), "separate")
+
+    fieldText = OxmlElement("w:t")
+    fieldText.text = placeholderText
+
+    fieldEnd = OxmlElement("w:fldChar")
+    fieldEnd.set(qn("w:fldCharType"), "end")
+
+    run._r.append(fieldBegin)
+    run._r.append(fieldInstruction)
+    run._r.append(fieldSeparate)
+    run._r.append(fieldText)
+    run._r.append(fieldEnd)
+    return run
+
+def addPageNumberFooter(section):
+    footerParagraph = section.footer.paragraphs[0]
+    footerParagraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    footerParagraph.text = ""
+
+    runs = [
+        footerParagraph.add_run("Page "),
+        addWordField(footerParagraph, "PAGE"),
+        footerParagraph.add_run(" of "),
+        addWordField(footerParagraph, "NUMPAGES"),
+    ]
+    for run in runs:
+        run.font.name = "Arial"
+        run.font.size = Pt(9)
 
 def createNewWordDoc():
     document = Document()
@@ -16,7 +59,8 @@ def createNewWordDoc():
     section.top_margin = Mm(5)
     section.bottom_margin = Mm(5)
     section.header_distance = Mm(1)
-    section.footer_distance = Mm(1)
+    section.footer_distance = Mm(5)
+    addPageNumberFooter(section)
     style = document.styles['Normal']
     font = style.font
     font.name = 'Arial'

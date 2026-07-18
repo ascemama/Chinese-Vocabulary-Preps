@@ -4,5 +4,8 @@
 __pycache__/
 vocab_*.docx
 *.cred
+*.csv
+*.docx
+uv.lock
 
 
