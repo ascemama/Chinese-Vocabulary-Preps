@@ -8,6 +8,12 @@ from docx.oxml.ns import qn
 from docx.shared import Pt
 from docx.shared import Mm
 
+def cellToText(value):
+    """Return a Google Sheets cell value as text."""
+    if value is None:
+        return ""
+    return str(value)
+
 def addWordField(paragraph, fieldName, placeholderText="1"):
     run = paragraph.add_run()
     fieldBegin = OxmlElement("w:fldChar")
@@ -79,9 +85,10 @@ def addWordsToBeReReviewed(ChineseVocabDoc, newDoc):
         records_length=len(records_data)
         for idx in range(0,records_length):
             if(records_data[idx]["ToBeReviewed"]=="x"):
-                #print(records_data[idx]["Traduction"])
-                SourceLen=len(numbered_to_accented(records_data[idx]["Source"]))
-                traductionLen=len(records_data[idx]["Traduction"])
+                source=cellToText(records_data[idx]["Source"])
+                traduction=cellToText(records_data[idx]["Traduction"])
+                SourceLen=len(numbered_to_accented(source))
+                traductionLen=len(traduction)
 
                 if(idx==(records_length-1)):
                     isLastLine=True
@@ -89,18 +96,18 @@ def addWordsToBeReReviewed(ChineseVocabDoc, newDoc):
                 if ((len(lineChinese)+SourceLen > 40) or (len(lineTraduction)+traductionLen > 40)):
                     padding=" "*(90-len(lineTraduction))
                     newDoc.add_paragraph(lineTraduction+padding+lineChinese)
-                    lineChinese=numbered_to_accented(records_data[idx]["Source"])
-                    lineTraduction=records_data[idx]["Traduction"]
+                    lineChinese=numbered_to_accented(source)
+                    lineTraduction=traduction
                 else:
                     if idx==0:
-                        lineChinese=numbered_to_accented(records_data[idx]["Source"])
-                        lineTraduction=records_data[idx]["Traduction"]
+                        lineChinese=numbered_to_accented(source)
+                        lineTraduction=traduction
                     if (isLastLine):
-                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
-                        lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
+                        lineChinese=lineChinese+"/"+numbered_to_accented(source)
+                        lineTraduction=lineTraduction+"/"+traduction
                     else:
-                        lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
-                        lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
+                        lineChinese=lineChinese+"/"+numbered_to_accented(source)
+                        lineTraduction=lineTraduction+"/"+traduction
         
                 if(isLastLine):
                     padding=" "*(90-len(lineTraduction))
@@ -115,27 +122,29 @@ def addNewWords(ChineseVocabDoc, newDoc,exportSheetNameList,exportFromLine):
     records_data = sheet_instance.get_all_records()
     records_length=len(records_data)
     for idx in range(exportFromLine,records_length):
-        SourceLen=len(numbered_to_accented(records_data[idx]["Source"]))
-        traductionLen=len(records_data[idx]["Traduction"])
-        #print("add new words "+records_data[idx]["Traduction"])
+        source=cellToText(records_data[idx]["Source"])
+        traduction=cellToText(records_data[idx]["Traduction"])
+        SourceLen=len(numbered_to_accented(source))
+        traductionLen=len(traduction)
+        #print("add new words "+traduction)
         if(idx==(records_length-1)):
             isLastLine=True
 
         if ((len(lineChinese)+SourceLen > 40) or (len(lineTraduction)+traductionLen > 40)):
             padding=" "*(90-len(lineTraduction))
             newDoc.add_paragraph(lineTraduction+padding+lineChinese)
-            lineChinese=numbered_to_accented(records_data[idx]["Source"])
-            lineTraduction=records_data[idx]["Traduction"]
+            lineChinese=numbered_to_accented(source)
+            lineTraduction=traduction
         else:
             if idx==0:
-                lineChinese=numbered_to_accented(records_data[idx]["Source"])
-                lineTraduction=records_data[idx]["Traduction"]
+                lineChinese=numbered_to_accented(source)
+                lineTraduction=traduction
             if (isLastLine):
-                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
-                lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
+                lineChinese=lineChinese+"/"+numbered_to_accented(source)
+                lineTraduction=lineTraduction+"/"+traduction
             else:
-                lineChinese=lineChinese+"/"+numbered_to_accented(records_data[idx]["Source"])
-                lineTraduction=lineTraduction+"/"+records_data[idx]["Traduction"]
+                lineChinese=lineChinese+"/"+numbered_to_accented(source)
+                lineTraduction=lineTraduction+"/"+traduction
         
         if(isLastLine):
             padding=" "*(90-len(lineTraduction))
