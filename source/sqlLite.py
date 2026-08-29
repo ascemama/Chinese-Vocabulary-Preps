@@ -9,11 +9,6 @@ except ImportError:  # Fallback if the helper is missing for any reason
 
     class OpenAITranslationError(Exception):
         """Placeholder exception when OpenAI helper is not available."""
-#from datetime import date
-#from gSheet import retrieveDoc, ExportSheetNameList
-
-#ExportFromLine=3
-
 # Ensure Unicode (e.g., Arabic) renders correctly on Windows consoles.
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -275,15 +270,5 @@ if __name__ == "__main__":
     cursor,connection=openDB()
     updateTraductionInDB("Fo2zhou1","Floride",cursor,connection)
     #print(checkIfAlreadyExistInDBAndAskWhichTraductionToKeep("dai4tao4","abc",cursor))
-
-    ''''
-    print("RetrieveDoc")
-    ChineseVocabDoc=retrieveDoc()
-    sheet_instance=ChineseVocabDoc.worksheet(ExportSheetNameList[-2])
-    print("Add rows to DB")
-    addExcelSheetToDB(sheet_instance,cursor,connection)
-    print("CloseDB")
-    closeDB(cursor,connection)
-'''
 
 

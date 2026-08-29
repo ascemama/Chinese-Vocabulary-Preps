@@ -23,6 +23,10 @@ This creates/refreshes `.venv` and installs dependencies from `pyproject.toml`.
 ## Run scripts with uv
 Run scripts through uv so they always use the project environment.
 
+Worksheet destinations and Word-export progress are configured in
+`source/config.py`. Update that file when a worksheet fills up or the Word
+export moves to a new worksheet or starting row.
+
 Build weekly Chinese vocabulary `.docx`:
 ```powershell
 uv run python source\ChineseVocab.py

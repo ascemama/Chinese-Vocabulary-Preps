@@ -113,11 +113,11 @@ def addWordsToBeReReviewed(ChineseVocabDoc, newDoc):
                     padding=" "*(90-len(lineTraduction))
                     newDoc.add_paragraph(lineTraduction+padding+lineChinese)
 
-def addNewWords(ChineseVocabDoc, newDoc,exportSheetNameList,exportFromLine):
+def addNewWords(ChineseVocabDoc, newDoc, exportSheetName, exportFromLine):
     lineChinese=""
     lineTraduction=""
     isLastLine=False
-    sheet_instance=ChineseVocabDoc.worksheet(exportSheetNameList[-1])
+    sheet_instance=ChineseVocabDoc.worksheet(exportSheetName)
     #print(sheet_instance)
     records_data = sheet_instance.get_all_records()
     records_length=len(records_data)

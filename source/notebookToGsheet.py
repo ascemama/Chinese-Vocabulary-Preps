@@ -1,4 +1,5 @@
-from gSheetHelper import upload_to_google_sheet, CurrentChineseWorksheet
+from config import ChineseWorkSheetForNewWords
+from gSheetHelper import upload_to_google_sheet
 from sqlLite import openDB,closeDB,updateDBWithNewWordFromNotebook
  
 def process_chinese_notebook_file(file_path,cursor,connection):
@@ -29,7 +30,7 @@ for item in result:
     print(item)
 
 
-upload_to_google_sheet(result, "ChineseVocab", CurrentChineseWorksheet)
+upload_to_google_sheet(result, "ChineseVocab", ChineseWorkSheetForNewWords)
 
 print("Done !")
 

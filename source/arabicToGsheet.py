@@ -1,4 +1,5 @@
-from gSheetHelper import upload_to_google_sheet, CurrentArabicWorksheet
+from config import CurrentArabicWorksheet
+from gSheetHelper import upload_to_google_sheet
 from sqlLite import openDB,closeDB,updateDBWithNewWord
  
 def process_arabic_notebook_file(file_path,cursor,connection):

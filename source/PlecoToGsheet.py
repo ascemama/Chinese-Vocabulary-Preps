@@ -140,7 +140,8 @@ def upload_if_requested(
 
 
 def main():
-    from gSheetHelper import CurrentChineseWorksheet, upload_to_google_sheet
+    from config import ChineseWorkSheetForNewWords
+    from gSheetHelper import upload_to_google_sheet
 
     file_path = "source/pleco.txt"
     cursor, connection = openDB()
@@ -157,7 +158,7 @@ def main():
             result,
             upload_to_google_sheet,
             "ChineseVocab",
-            CurrentChineseWorksheet,
+            ChineseWorkSheetForNewWords,
         )
     finally:
         print_statistics(result.statistics)
